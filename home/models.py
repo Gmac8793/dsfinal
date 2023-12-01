@@ -48,4 +48,4 @@ class Location(models.Model):
     longitude = models.FloatField(blank=False)
     
     def __str__(self):
-        return f'{self.location_name} {self.latitude} {self.longitude}'
+        return (f'{self.location_name} {self.latitude} {self.longitude}')
