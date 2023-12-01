@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+    <style>
+        #map { height: 350px;}
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Location</h1>
+
+    <div id="map"></div>
+</body>
+<script>
+
+var map = L.map('map');
+map.setView([15.117569258172438, 104.90279805091271], 13);
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribute: '© OpenStreetMap'
+}).addTo(map);
+
+navigator.geolocation.watchPosition(success, error);
+
+let marker, circle, zoomed;
+
+function success(pos) {
+
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+    const accuracy = pos.coords.accuracy;
+
+    if (marker) {
+        map.removeLayer(marker);
+        map.removeLayer(circle);
+    }
+
+    marker = L.marker([lat, lng]).addTo(map);
+    circle = L.circle([lat, lng], { radius: accuracy }).addTo(map);
+
+    if (!zoomed) {
+        zoomed = map.fitBounds(circle.getBounds());
+    }
+
+    map.setView([lat, lng]);
+
+}
+
+function error(err) {
+
+    if (err.code === 1) {
+        alert("Please allow geolocation access");
+    } else {
+        alert("Cannot get current location");
+    }
+}
+
+var places = [
+{ name: "คณะวิทยาศาสตร์ มหาวิทยาลัยอุบลราชธานี", location: [15.122714572530015, 104.90652074496957] },
+{ name: "โรงอาหารกลาง2 ม.อุบล", location: [15.119720340150552, 104.90664690084287] },
+];
+
+places.forEach(place => {
+    L.marker(place.location)
+        .addTo(map)
+        .bindPopup(place.name);
+});
+
+</script>
+
+</html>
